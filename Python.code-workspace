@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../../alex-sysver/Python"
+		},
+		{
+			"name": "ServoMotor",
+			"path": "../ServoMotor"
+		},
+		{
+			"name": "MultiServo",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
