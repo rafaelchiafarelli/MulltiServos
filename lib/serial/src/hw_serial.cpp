@@ -18,6 +18,12 @@ uint8_t hw_serial::receive(uint8_t rcv)
         {
             comm_state = Ending;
         }
+        else if (ReceivedBytes[rcv_counter] == HEADER)
+        {
+            rcv_counter = 0;
+            ReceivedBytes[0] = rcv;
+        }
+
         break;
     case Ending:
         checksum_counter += 1;
@@ -33,6 +39,11 @@ uint8_t hw_serial::receive(uint8_t rcv)
         {
             comm_state = Searching;
             checksum_counter = 0;
+        }
+        else if (ReceivedBytes[rcv_counter] == HEADER)
+        {
+            rcv_counter = 0;
+            ReceivedBytes[0] = rcv;
         }
         break;
     default:
@@ -96,7 +107,7 @@ bool hw_serial::handler(uint16_t dest[], size_t max_size)
         able_to_parse = false;
 
         return Parse(dest, max_size);
-        }
+    }
     return false;
 }
 
