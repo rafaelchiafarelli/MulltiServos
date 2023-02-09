@@ -12,30 +12,14 @@
 #include <stdio.h>
 #include "engine.h"
 #include "hw_serial.h"
+#include "BinaryOutputs.h"
 hw_serial Serial;
-engine engines[] =
-    {
-        {&PORTB, &DDRB, 0, 15624, 31248, 15624},
-        {&PORTB, &DDRB, 1, 15624, 31248, 7812},
-        {&PORTB, &DDRB, 2, 15624, 31248, 15624},
-        {&PORTB, &DDRB, 3, 15624, 31248, 7812},
-        {&PORTB, &DDRB, 4, 15624, 31248, 15624},
-        {&PORTB, &DDRB, 5, 15624, 31248, 10000},
-        {&PORTB, &DDRB, 6, 15624, 31248, 15624},
-        {&PORTB, &DDRB, 7, 15624, 31248, 10000},
-        {&PORTC, &DDRC, 0, 15624, 31248, 15624},
-        {&PORTC, &DDRC, 1, 15624, 31248, 7812}
 
-};
-unsigned int counter = 0;
-typedef enum
-{
-  SERVO_UP,
-  SERVO_DOWN,
-  SERVO_WAIT
-} servo_type;
-servo_type state = SERVO_UP;
-
+binary keys;
+BinaryOutputs switches;
+binary relay_state;
+BinaryOutputs relays;
+EngineControl servos;
 ISR(TIMER4_COMPA_vect);
 ISR(USART0_RX_vect);
 ISR(USART0_TX_vect);
@@ -48,11 +32,6 @@ void setup()
   // DDRB = 1 << 7;
   // engines[0].ddr = 1 << engines[1].pin;
 
-  for (auto &e : engines)
-  {
-    *e.ddr |= 1 << e.pin;
-    *e.port ^= 0 << e.pin;
-  }
   cli(); // stop interrupts
 
   // set timer4 interrupt at 1Hz
@@ -82,42 +61,7 @@ void setup()
 ISR(TIMER4_COMPA_vect)
 {
   // PORTB ^= 1 << 7;
-
-  switch (state)
-  {
-  case SERVO_UP:
-    OCR4A = engines[counter].pos_0 + engines[counter].pos;
-    *engines[counter].port ^= 1 << engines[counter].pin;
-    state = SERVO_DOWN;
-    break;
-  case SERVO_DOWN:
-    *engines[counter].port ^= 1 << engines[counter].pin;
-
-    if (engines[counter].pos_max <= engines[counter].pos + engines[counter].pos_0)
-    {
-      counter++;
-      if (counter >= sizeof(engines) / sizeof(engine))
-      {
-        counter = 0;
-      }
-      OCR4A = engines[counter].pos_0 + engines[counter].pos;
-      *engines[counter].port ^= 1 << engines[counter].pin;
-    }
-    else
-    {
-      OCR4A = engines[counter].pos_max - engines[counter].pos_0 - engines[counter].pos;
-      counter++;
-      if (counter >= sizeof(engines) / sizeof(engine))
-      {
-        counter = 0;
-      }
-      state = SERVO_UP;
-    }
-    break;
-  case SERVO_WAIT:
-
-    break;
-  }
+  servos.handler();
 }
 
 ISR(USART0_RX_vect)
@@ -131,7 +75,7 @@ ISR(USART0_TX_vect)
 
 int main()
 {
-  uint16_t array[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  uint16_t array[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   setup();
 
   _delay_ms(100);
@@ -139,18 +83,24 @@ int main()
   while (1)
   {
 
-    if (Serial.handler(array, 10))
+    if (Serial.handler(array, 16))
     {
       char tmp[100];
       memset(tmp, 0, 100);
-      sprintf(tmp, "\na1:%d a2:%d a3:%d a4:%d a5:%d a6:%d a7:%d a8:%d a9:%d a10:%d", array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8], array[9]);
+      sprintf(tmp, "a0:%d a1:%d a2:%d a3:%d a4:%d a5:%d a6:%d a7:%d a8:%d a9:%d a10:%d a11:%d a12:%d a13:%d a14:%d a15:%d\n", array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8], array[9], array[10], array[11], array[12], array[13], array[14], array[15]);
 
       Serial.uart_sendstr(tmp);
-      for (int i = 0; i < 10; i++)
-        engines[i].pos = array[i];
-    }
-    _delay_ms(10);
-  }
+      servos.load(array);
 
+      keys.value = ((uint32_t)array[10] << 16) + (uint32_t)array[11];
+      switches.load(keys.value);
+
+      relay_state.value = ((uint32_t)array[12] << 16) + (uint32_t)array[13];
+      relays.load(relay_state.value);
+      _delay_ms(10);
+    }
+    switches.handler(keys);
+    relays.handler(relay_state);
+  }
   return 0;
 }

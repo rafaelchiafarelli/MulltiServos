@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "SerialTest",
+			"path": "../SerialTest"
+		}
+	],
+	"settings": {}
+}
