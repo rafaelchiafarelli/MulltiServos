@@ -17,8 +17,7 @@ hw_serial Serial;
 
 binary keys;
 BinaryOutputs switches;
-binary relay_state;
-BinaryOutputs relays;
+
 EngineControl servos;
 ISR(TIMER4_COMPA_vect);
 ISR(USART0_RX_vect);
@@ -77,7 +76,11 @@ int main()
 {
   uint16_t array[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   setup();
+  char tmp[100];
+  memset(tmp, 0, 100);
+  sprintf(tmp, "a0:%d a1:%d a2:%d a3:%d a4:%d a5:%d a6:%d a7:%d a8:%d a9:%d a10:%d a11:%d a12:%d a13:%d a14:%d a15:%d\n", array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8], array[9], array[10], array[11], array[12], array[13], array[14], array[15]);
 
+  Serial.send(tmp, strlen(tmp));
   _delay_ms(100);
 
   while (1)
@@ -89,18 +92,12 @@ int main()
       memset(tmp, 0, 100);
       sprintf(tmp, "a0:%d a1:%d a2:%d a3:%d a4:%d a5:%d a6:%d a7:%d a8:%d a9:%d a10:%d a11:%d a12:%d a13:%d a14:%d a15:%d\n", array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8], array[9], array[10], array[11], array[12], array[13], array[14], array[15]);
 
-      Serial.uart_sendstr(tmp);
+      Serial.send(tmp, strlen(tmp));
       servos.load(array);
-
       keys.value = ((uint32_t)array[10] << 16) + (uint32_t)array[11];
       switches.load(keys.value);
-
-      relay_state.value = ((uint32_t)array[12] << 16) + (uint32_t)array[13];
-      relays.load(relay_state.value);
-      _delay_ms(10);
     }
-    switches.handler(keys);
-    relays.handler(relay_state);
+    _delay_ms(5);
   }
   return 0;
 }

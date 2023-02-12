@@ -29,10 +29,12 @@ uint8_t hw_serial::receive(uint8_t rcv)
         checksum_counter += 1;
         if (ReceivedBytes[rcv_counter] == TERMINATOR)
         {
+
             sprintf((char *)ParseBuffer, "%s", ReceivedBytes); //
             bytes_to_parse = rcv_counter;
             checksum_counter = 0;
             comm_state = Searching;
+
             able_to_parse = true;
         }
         else if (checksum_counter > CHECKSUM_SIZE)
@@ -85,8 +87,10 @@ bool hw_serial::Parse(uint16_t dest[], size_t max_size)
 
     if (cs == checksum)
     {
+
         return decode(dest, max_size);
     }
+
     return false;
 }
 
@@ -102,6 +106,7 @@ void hw_serial::send(const char *str, size_t s)
 
 bool hw_serial::handler(uint16_t dest[], size_t max_size)
 {
+
     if (able_to_parse)
     {
         able_to_parse = false;

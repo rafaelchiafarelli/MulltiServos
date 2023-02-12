@@ -34,7 +34,7 @@ private:
     uint8_t OutBuffer[256];
     unsigned int out_index;
     unsigned int out_amount;
-    bool able_to_parse = false;
+    volatile bool able_to_parse = false;
     int checksum_counter = 0;
     unsigned int bytes_to_parse;
 
