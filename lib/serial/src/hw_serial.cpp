@@ -36,6 +36,7 @@ uint8_t hw_serial::receive(uint8_t rcv)
             comm_state = Searching;
 
             able_to_parse = true;
+
         }
         else if (checksum_counter > CHECKSUM_SIZE)
         {
@@ -132,5 +133,5 @@ int hw_serial::set(char *t, uint16_t dest[], int index)
 {
     uint16_t tmp = atol(t);
     dest[index] = tmp;
-    return (int)(tmp > 0);
+    return 1;
 }

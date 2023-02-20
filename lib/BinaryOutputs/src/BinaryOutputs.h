@@ -1,77 +1,60 @@
 #pragma once
 #include <avr/pgmspace.h>
 #include <avr/io.h>
+#define _PORTK 0x108
+#define _DDRK 0x107
+#define _PORTF 0x31
+#define _DDRF 0x30
+#define _PORTA 0x22
+#define _DDRA 0x21
+#define _PORTC 0x28
+#define _DDRC 0x27
 typedef struct
 {
-    volatile unsigned char *port;
-    volatile unsigned char *ddr;
-    uint16_t pin;
+    volatile uint8_t * port;
+    volatile uint8_t * ddr;
+    
+} out_port;
 
-} outputs;
-typedef union
+typedef union 
 {
-    struct
-    {
-        unsigned char b : 1;
-    } bits[32];
-    uint32_t value;
-} binary;
+    
+    uint8_t output[4];
+    uint32_t inputvalue;
+}outputs;
+
 
 class BinaryOutputs
 {
 public:
-    const outputs pins[32];
-    binary out;
-    void handler(binary re)
+    const out_port ports[4];
+    outputs out;
+    void handler()
     {
-        int i = 0;
-        for (auto &e : pins)
-        {
-            *e.port ^= out.bits[i].b << e.pin;
-            i++;
-        }
+        *ports[0].port = out.output[0];
+        *ports[1].port = out.output[1];
+        *ports[2].port = out.output[2];
+        *ports[3].port = out.output[3];
     };
     void load(uint32_t v)
     {
-        out.value = v;
+        out.inputvalue = v;
     }
-    BinaryOutputs() : pins({{&PORTK, &DDRK, 0},
-                            {&PORTK, &DDRK, 1},
-                            {&PORTK, &DDRK, 2},
-                            {&PORTK, &DDRK, 3},
-                            {&PORTK, &DDRK, 4},
-                            {&PORTK, &DDRK, 5},
-                            {&PORTK, &DDRK, 6},
-                            {&PORTK, &DDRK, 7},
-                            {&PORTF, &DDRF, 0},
-                            {&PORTF, &DDRF, 1},
-                            {&PORTF, &DDRF, 2},
-                            {&PORTF, &DDRF, 3},
-                            {&PORTF, &DDRF, 4},
-                            {&PORTF, &DDRF, 5},
-                            {&PORTF, &DDRF, 6},
-                            {&PORTF, &DDRF, 7},
-                            {&PORTL, &DDRL, 0},
-                            {&PORTL, &DDRL, 1},
-                            {&PORTL, &DDRL, 2},
-                            {&PORTL, &DDRL, 3},
-                            {&PORTL, &DDRL, 4},
-                            {&PORTL, &DDRL, 5},
-                            {&PORTL, &DDRL, 6},
-                            {&PORTL, &DDRL, 7},
-                            {&PORTG, &DDRG, 0},
-                            {&PORTG, &DDRG, 1},
-                            {&PORTG, &DDRG, 2},
-                            {&PORTG, &DDRG, 3},
-                            {&PORTG, &DDRG, 4},
-                            {&PORTG, &DDRG, 5},
-                            {&PORTG, &DDRG, 6},
-                            {&PORTG, &DDRG, 7}})
+    BinaryOutputs() : ports({{(volatile uint8_t *)(_PORTK), (volatile uint8_t *)(_DDRK)},   /* PORTK */
+                            {(volatile uint8_t *)(_PORTF), (volatile uint8_t *)(_DDRF)},    /* PORTF */
+                            {(volatile uint8_t *)(_PORTA), (volatile uint8_t *)(_DDRA)},    /* PORTA */
+                            {(volatile uint8_t *)(_PORTC), (volatile uint8_t *)(_DDRC)}     /* PORTC */
+                            })
     {
-        for (auto &e : pins)
-        {
-            *e.ddr |= 1 << e.pin;
-            *e.port ^= 0 << e.pin;
-        }
+        *ports[0].ddr = 0xFF;
+        *ports[1].ddr = 0xFF;
+        *ports[2].ddr = 0xFF;
+        *ports[3].ddr = 0xFF;
+        
+        *ports[0].port = 0x00;
+        *ports[1].port = 0x00;
+        *ports[2].port = 0x00;
+        *ports[3].port = 0x00;
+        
     };
 };

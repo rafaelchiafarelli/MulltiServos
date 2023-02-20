@@ -15,7 +15,6 @@
 #include "BinaryOutputs.h"
 hw_serial Serial;
 
-binary keys;
 BinaryOutputs switches;
 
 EngineControl servos;
@@ -65,39 +64,44 @@ ISR(TIMER4_COMPA_vect)
 
 ISR(USART0_RX_vect)
 {
-  UDR0 = Serial.receive(UDR0);
+  Serial.receive(UDR0);
 }
 ISR(USART0_TX_vect)
 {
   UDR0 = Serial.send_one();
 }
-
+static uint16_t array[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int main()
 {
-  uint16_t array[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   setup();
-  char tmp[100];
-  memset(tmp, 0, 100);
-  sprintf(tmp, "a0:%d a1:%d a2:%d a3:%d a4:%d a5:%d a6:%d a7:%d a8:%d a9:%d a10:%d a11:%d a12:%d a13:%d a14:%d a15:%d\n", array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8], array[9], array[10], array[11], array[12], array[13], array[14], array[15]);
-
-  Serial.send(tmp, strlen(tmp));
-  _delay_ms(100);
 
   while (1)
   {
-
     if (Serial.handler(array, 16))
     {
-      char tmp[100];
-      memset(tmp, 0, 100);
-      sprintf(tmp, "a0:%d a1:%d a2:%d a3:%d a4:%d a5:%d a6:%d a7:%d a8:%d a9:%d a10:%d a11:%d a12:%d a13:%d a14:%d a15:%d\n", array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8], array[9], array[10], array[11], array[12], array[13], array[14], array[15]);
+      char tmp[50];
+      memset(tmp,0,50);
+
+      char ansi_0[17];
+      memset(ansi_0, 0, 17);
+      itoa(array[10],ansi_0,2);
+
+      char ansi_1[17];
+      memset(ansi_1, 0, 17);
+      itoa(array[11],ansi_1,2);
+
+      sprintf(tmp, "a10:%u %s a11:%u %s",array[10], ansi_0,array[11], ansi_1);
 
       Serial.send(tmp, strlen(tmp));
+
       servos.load(array);
-      keys.value = ((uint32_t)array[10] << 16) + (uint32_t)array[11];
-      switches.load(keys.value);
     }
-    _delay_ms(5);
+    uint32_t value0 = array[10];
+    uint32_t value1 = array[11];
+    uint32_t value = ((uint32_t)value0<<16) + value1;
+    switches.load(value);
+    switches.handler();
+    _delay_ms(50);
   }
   return 0;
 }
