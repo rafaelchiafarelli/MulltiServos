@@ -46,9 +46,9 @@ private:
 
     } comm_type;
     comm_type comm_state = Searching;
-    bool decode(uint16_t dest[], size_t max_size);
-    bool Parse(uint16_t dest[], size_t max_size);
-    int set(char *t, uint16_t dest[], int index);
+    bool decode(uint32_t dest[], size_t max_size);
+    bool Parse(uint32_t dest[], size_t max_size);
+    int set(char *t, uint32_t dest[], int index);
 
     void uart_sendstr(uint8_t *data)
     {
@@ -92,7 +92,7 @@ public:
     uint8_t send_one();
     void send(const char *str, size_t s);
     uint8_t receive(uint8_t d);
-    bool handler(uint16_t dest[], size_t max_size);
+    bool handler(uint32_t dest[], size_t max_size);
     hw_serial(/* args */)
     {
         memset(ParseBuffer, 0, 256);

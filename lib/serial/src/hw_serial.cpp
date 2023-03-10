@@ -70,7 +70,7 @@ uint8_t hw_serial::send_one()
     return ret;
 }
 
-bool hw_serial::Parse(uint16_t dest[], size_t max_size)
+bool hw_serial::Parse(uint32_t dest[], size_t max_size)
 {
     uint8_t checksum = 0;
     uint8_t *ptr = ParseBuffer;
@@ -105,7 +105,7 @@ void hw_serial::send(const char *str, size_t s)
     UDR0 = OutBuffer[0];
 }
 
-bool hw_serial::handler(uint16_t dest[], size_t max_size)
+bool hw_serial::handler(uint32_t dest[], size_t max_size)
 {
 
     if (able_to_parse)
@@ -117,7 +117,7 @@ bool hw_serial::handler(uint16_t dest[], size_t max_size)
     return false;
 }
 
-bool hw_serial::decode(uint16_t dest[], size_t max_size)
+bool hw_serial::decode(uint32_t dest[], size_t max_size)
 {
     char *token, *str, *tofree;
 
@@ -129,7 +129,7 @@ bool hw_serial::decode(uint16_t dest[], size_t max_size)
     return true;
 }
 
-int hw_serial::set(char *t, uint16_t dest[], int index)
+int hw_serial::set(char *t, uint32_t dest[], int index)
 {
     uint16_t tmp = atol(t);
     dest[index] = tmp;
