@@ -58,5 +58,5 @@ public:
     };
 
     void handler();
-    void load(uint32_t *ar);
+    void load(uint16_t *ar);
 };

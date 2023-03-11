@@ -54,9 +54,9 @@ class AnalogOut{
     
     void SetAnalog(uint8_t idx, int duty_cycle)
     {
-        if(idx < MAX_CHANNELS || duty_cycle <= 100)
+        if(idx < MAX_CHANNELS)
         {
-            uint8_t v = CalcBin(duty_cycle);
+            uint8_t v = duty_cycle;
             switch(idx)
             {
                 case 0:

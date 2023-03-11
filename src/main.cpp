@@ -75,7 +75,7 @@ ISR(USART0_TX_vect)
 {
   UDR0 = Serial.send_one();
 }
-static uint32_t array[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65535, 65535, 0, 0, 0};
+static uint16_t array[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65535, 65535, 0, 0, 0};
 int main()
 {
 
@@ -102,19 +102,19 @@ int main()
       Serial.send(tmp, strlen(tmp));
        */
       servos.load(array);
-      uint32_t value0 = array[10]; // switches hi
-      uint32_t value1 = array[11]; // switches lo
+      uint16_t value0 = array[10]; // switches hi
+      uint16_t value1 = array[11]; // switches lo
 
-      uint8_t duty_R_LED0 = array[12];
-      uint8_t duty_G_LED0 = array[13];
-      uint8_t duty_B_LED0 = array[14];
+      uint8_t duty_R_LED0 = array[12]&0x00ff;
+      uint8_t duty_G_LED0 = array[13]&0x00ff;
+      uint8_t duty_B_LED0 = array[14]&0x00ff;
 
-      uint8_t duty_R_LED1 = array[12]>>8;
-      uint8_t duty_G_LED1 = array[13]>>8;
-      uint8_t duty_B_LED1 = array[14]>>8;
+      uint8_t duty_R_LED1 = (array[12]&0xff00)>>8;
+      uint8_t duty_G_LED1 = (array[13]&0xff00)>>8;
+      uint8_t duty_B_LED1 = (array[14]&0xff00)>>8;
 
-      uint8_t duty_LED0 = array[15];
-      uint8_t duty_LED1 = array[15]>>8;
+      uint8_t duty_LED0 = (array[15]&0x00ff);
+      uint8_t duty_LED1 = (array[15]&0xff00)>>8;
 
       uint32_t value = ((uint32_t)value0<<16) + value1;
       

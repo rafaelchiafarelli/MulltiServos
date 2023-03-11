@@ -1,5 +1,5 @@
 #include "engine.h"
-void EngineControl::load(uint32_t *ar)
+void EngineControl::load(uint16_t *ar)
 {
     for (int i = 0; i < NUMBER_OF_ENGINES; i++)
     {
