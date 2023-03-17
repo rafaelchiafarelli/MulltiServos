@@ -17,14 +17,15 @@ typedef struct
     volatile unsigned char *ddr;
     const uint8_t mask_high_pin;
     const uint8_t mask_low_pin;
-    const uint16_t pos_0;
-    const uint16_t pos_max;
+    
     
 } engine;
 
 class EngineControl
 {
 private:
+    const uint16_t pos_max = 15624;
+    const uint16_t pos_0 = 15624;
     uint16_t pos[NUMBER_OF_ENGINES];
     const engine engines[NUMBER_OF_ENGINES];
 
@@ -33,16 +34,16 @@ private:
 public:
     servo_type state = SERVO_UP;
     EngineControl() : engines({
-        {&PORTB, &DDRB, 0b00000001, 0b11111110, 15624, 31248},
-        {&PORTB, &DDRB, 0b00000010, 0b11111101, 15624, 31248},
-        {&PORTB, &DDRB, 0b00000100, 0b11111011, 15624, 31248},
-        {&PORTB, &DDRB, 0b00001000, 0b11110111, 15624, 31248},
-        {&PORTL, &DDRL, 0b00000001, 0b11111110, 15624, 31248},
-        {&PORTL, &DDRL, 0b00000010, 0b11111101, 15624, 31248},
-        {&PORTL, &DDRL, 0b00000100, 0b11111011, 15624, 31248},
-        {&PORTL, &DDRL, 0b00001000, 0b11110111, 15624, 31248},
-        {&PORTL, &DDRL, 0b00010000, 0b11101111, 15624, 31248},
-        {&PORTL, &DDRL, 0b00100000, 0b11011111, 15624, 31248}
+        {&PORTB, &DDRB, 0b00000001, 0b11111110},
+        {&PORTB, &DDRB, 0b00000010, 0b11111101},
+        {&PORTB, &DDRB, 0b00000100, 0b11111011},
+        {&PORTB, &DDRB, 0b00001000, 0b11110111},
+        {&PORTL, &DDRL, 0b00000001, 0b11111110},
+        {&PORTL, &DDRL, 0b00000010, 0b11111101},
+        {&PORTL, &DDRL, 0b00000100, 0b11111011},
+        {&PORTL, &DDRL, 0b00001000, 0b11110111},
+        {&PORTL, &DDRL, 0b00010000, 0b11101111},
+        {&PORTL, &DDRL, 0b00100000, 0b11011111}
         })
         
     {

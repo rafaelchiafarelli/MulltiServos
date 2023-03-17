@@ -50,24 +50,6 @@ private:
     bool Parse(uint16_t dest[], size_t max_size);
     int set(char *t, uint16_t dest[], int index);
 
-    void uart_sendstr(uint8_t *data)
-    {
-        /*
-        Use this to send a string, it will split it up into individual parts
-        send those parts, and then send the new line code
-        */
-        UCSR0B &= 0b10111000;
-        while (*data)
-        {
-            while ((UCSR0A & (1 << UDRE0)) == 0)
-                ;         // make sure the data register is cleared
-            UDR0 = *data; // goes through and splits the string into individual bits, sends them
-            data += 1;    // go to new bit in string
-        }
-        while ((UCSR0A & (1 << UDRE0)) == 0)
-            ;        // make sure the data register is cleared
-        UDR0 = '\n'; // send a new line just to be sure
-    }
 
 public:
     void uart_sendstr(const char *data)

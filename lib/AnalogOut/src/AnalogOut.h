@@ -43,7 +43,7 @@ class AnalogOut{
         TCNT2 = 0;
 
         TCCR3A = 0b10100001;
-        TCCR3B = 0b00001011;
+        TCCR3B = 0b11000011;
         TCCR3C = 0b11000000;
         OCR3B = 0b10000000; // 15624 -- 1ms = (16*10^6) / (1*1024) - 1 (must be <65536)
         OCR3A = 0b10000000; // 15624 -- 1ms = (16*10^6) / (1*1024) - 1 (must be <65536)
@@ -85,7 +85,7 @@ class AnalogOut{
                 break;
                 case 7:
                     OCR3BL = v;
-                    OCR3B = 0;
+                    OCR3BH = 0;
                 break;                                                                                    
             }
         }
