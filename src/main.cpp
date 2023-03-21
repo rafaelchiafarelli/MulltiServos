@@ -58,6 +58,11 @@ void setup()
 
 
   sei(); // allow interrupts
+      for(int i=0; i< MAX_OUTPUT_SIZE;i++)
+    {
+
+      switches.SetOutput(i, true);
+    }
 }
 
 ISR(TIMER4_COMPA_vect)
@@ -75,7 +80,7 @@ ISR(USART0_TX_vect)
 {
   UDR0 = Serial.send_one();
 }
-static uint16_t array[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65535, 65535, 0, 0, 0};
+static uint16_t array[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int main()
 {
 
@@ -117,27 +122,11 @@ int main()
       analogs.SetAnalog(6, 0);
       analogs.SetAnalog(7, 0);  
     }     
-    /*
-
-    */
+  
     if (Serial.handler(array, 16))
     {
-            /*
-      char tmp[50];
-      memset(tmp,0,50);
+  
 
-      char ansi_0[17];
-      memset(ansi_0, 0, 17);
-      itoa(array[10],ansi_0,2);
-
-      char ansi_1[17];
-      memset(ansi_1, 0, 17);
-      itoa(array[11],ansi_1,2);
-
-      sprintf(tmp, "a10:%lu %s a11:%lu %s",array[10], ansi_0,array[11], ansi_1);
-     
-      Serial.send(tmp, strlen(tmp));
-       */
 
       servos.load(array);
       uint16_t value0 = array[10]; // switches hi
@@ -175,8 +164,7 @@ int main()
           
     for(int i=0; i< MAX_OUTPUT_SIZE;i++)
     {
-
-      switches.SetOutput(i, buttons.get_pin(i));
+      switches.SetOutput(i, !buttons.get_pin(i));
     }
 
     _delay_ms(50);

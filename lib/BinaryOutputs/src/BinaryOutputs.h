@@ -30,8 +30,8 @@ public:
             *ports[i].port &= ports[i].mask_reset;
     }
     BinaryOutputs() : ports({
-                            {&PORTK, &DDRK,0b00000001,0b11111110},
                             {&PORTK, &DDRK,0b00000010,0b11111101},
+                            {&PORTK, &DDRK,0b00000001,0b11111110},
                             {&PORTK, &DDRK,0b00000100,0b11111011},
                             {&PORTK, &DDRK,0b00001000,0b11110111},
                             {&PORTK, &DDRK,0b00010000,0b11101111},
