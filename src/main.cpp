@@ -118,16 +118,7 @@ int main()
       analogs.SetAnalog(7, 0);  
     }     
     /*
-    int var[20];   
-    for(int i=0; i<20;i++)
-    {
-      var[i] = buttons.get_pin(i);
-    }
-      char tmp[100];
-      memset(tmp,0,100);
-      sprintf(tmp, "b0:%d b1:%d b2:%d b3:%d b4:%d b5:%d b6:%d b7:%d b8:%d b9:%d b10:%d b11:%d b12:%d b13:%d b14:%d b15:%d b16:%d b17:%d b18:%d b19:%d ",var[0],var[1],var[2],var[3],var[4],var[5],var[6],var[7],var[8],var[9],var[10],var[11],var[12],var[13],var[14],var[15],var[16],var[17],var[18],var[19]);
-     
-      Serial.uart_sendstr(tmp);
+
     */
     if (Serial.handler(array, 16))
     {
@@ -164,10 +155,12 @@ int main()
       uint8_t duty_LED1 = (array[15]&0xff00)>>8;
 
       uint32_t value = ((uint32_t)value0<<16) + value1;
-      
-      switches.load(value);
-      switches.handler();
-      
+      for(int i=0; i< MAX_OUTPUT_SIZE;i++)
+      {
+
+        switches.SetOutput(i, value>>i&0x01);
+      }
+     
       analogs.SetAnalog(0, duty_R_LED0);
       analogs.SetAnalog(1, duty_G_LED0);
       analogs.SetAnalog(2, duty_B_LED0);
@@ -179,7 +172,13 @@ int main()
 
     }
 
-    
+          
+    for(int i=0; i< MAX_OUTPUT_SIZE;i++)
+    {
+
+      switches.SetOutput(i, buttons.get_pin(i));
+    }
+
     _delay_ms(50);
   }
   return 0;

@@ -80,7 +80,7 @@ public:
     BinaryInputs() : ports({
                             {&PINA,&PORTA, &DDRA, 0b00000000},    /* PORTD */
                             {&PINC,&PORTC, &DDRC, 0b00000000},    /* PORTG */
-                            {&PIND,&PORTD, &DDRD, 0b10111111},    /* PORTL */
+                            {&PIND,&PORTD, &DDRD, 0b01111111},    /* PORTL */
                             {&PING,&PORTG, &DDRG, 0b11111000},    /* PORTB */
                             }),
                     pins({  {0,0b00000001},
@@ -99,7 +99,7 @@ public:
                             {1,0b00100000},
                             {1,0b01000000},
                             {1,0b10000000},
-                            {2,0b01000000},
+                            {2,0b10000000},
                             {3,0b00000001},
                             {3,0b00000010},
                             {3,0b00000100}

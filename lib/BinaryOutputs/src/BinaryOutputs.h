@@ -1,60 +1,73 @@
 #pragma once
 #include <avr/pgmspace.h>
 #include <avr/io.h>
-#define _PORTK 0x108
-#define _DDRK 0x107
-#define _PORTF 0x31
-#define _DDRF 0x30
-#define _PORTA 0x22
-#define _DDRA 0x21
-#define _PORTC 0x28
-#define _DDRC 0x27
+
+#define MAX_OUTPUT_SIZE 32
+
 typedef struct
 {
     volatile uint8_t * port;
     volatile uint8_t * ddr;
+    const uint8_t mask_set;
+    const uint8_t mask_reset;
     
 } out_port;
 
-typedef union 
-{
-    
-    uint8_t output[4];
-    uint32_t inputvalue;
-}outputs;
+
 
 
 class BinaryOutputs
 {
 public:
-    const out_port ports[4];
-    outputs out;
-    void handler()
+    out_port ports[MAX_OUTPUT_SIZE];
+
+
+    void SetOutput(int i, bool v)
     {
-        *ports[0].port = out.output[0];
-        *ports[1].port = out.output[1];
-        *ports[2].port = out.output[2];
-        *ports[3].port = out.output[3];
-    };
-    void load(uint32_t v)
-    {
-        out.inputvalue = v;
+        if(v) //set the output
+            *ports[i].port |= ports[i].mask_set;
+        else //reset the output
+            *ports[i].port &= ports[i].mask_reset;
     }
-    BinaryOutputs() : ports({{(volatile uint8_t *)(_PORTK), (volatile uint8_t *)(_DDRK)},   /* PORTK */
-                            {(volatile uint8_t *)(_PORTF), (volatile uint8_t *)(_DDRF)},    /* PORTF */
-                            {(volatile uint8_t *)(_PORTA), (volatile uint8_t *)(_DDRA)},    /* PORTA */
-                            {(volatile uint8_t *)(_PORTC), (volatile uint8_t *)(_DDRC)}     /* PORTC */
+    BinaryOutputs() : ports({
+                            {&PORTK, &DDRK,0b00000001,0b11111110},
+                            {&PORTK, &DDRK,0b00000010,0b11111101},
+                            {&PORTK, &DDRK,0b00000100,0b11111011},
+                            {&PORTK, &DDRK,0b00001000,0b11110111},
+                            {&PORTK, &DDRK,0b00010000,0b11101111},
+                            {&PORTK, &DDRK,0b00100000,0b11011111},
+                            {&PORTK, &DDRK,0b01000000,0b10111111},
+                            {&PORTK, &DDRK,0b10000000,0b01111111},
+                            {&PORTF, &DDRF,0b00000001,0b11111110},
+                            {&PORTF, &DDRF,0b00000010,0b11111101},
+                            {&PORTF, &DDRF,0b00000100,0b11111011},
+                            {&PORTF, &DDRF,0b00001000,0b11110111},
+                            {&PORTF, &DDRF,0b00010000,0111101111},
+                            {&PORTF, &DDRF,0b00100000,0b11011111},
+                            {&PORTF, &DDRF,0b01000000,0b10111111},
+                            {&PORTF, &DDRF,0b10000000,0b01111111},
+                            {&PORTB, &DDRB,0b00000001,0b11111110},
+                            {&PORTH, &DDRH,0b00000010,0b11111101},
+                            {&PORTJ, &DDRJ,0b00000001,0b11111110},
+                            {&PORTJ, &DDRJ,0b00000010,0b11111101},
+                            {&PORTJ, &DDRJ,0b00000100,0b11111011},
+                            {&PORTJ, &DDRJ,0b00001000,0b11110111},
+                            {&PORTJ, &DDRJ,0b00010000,0b11101111},
+                            {&PORTD, &DDRD,0b00000001,0b11111110},
+                            {&PORTD, &DDRD,0b00000010,0b11111101},
+                            {&PORTD, &DDRD,0b00000100,0b11111011},
+                            {&PORTD, &DDRD,0b00001000,0b11110111},
+                            {&PORTE, &DDRE,0b00000001,0b11111110},
+                            {&PORTE, &DDRE,0b00000010,0b11111101},
+                            {&PORTE, &DDRE,0b00100000,0b11011111}
                             })
+
     {
-        *ports[0].ddr = 0xFF;
-        *ports[1].ddr = 0xFF;
-        *ports[2].ddr = 0xFF;
-        *ports[3].ddr = 0xFF;
-        
-        *ports[0].port = 0x00;
-        *ports[1].port = 0x00;
-        *ports[2].port = 0x00;
-        *ports[3].port = 0x00;
-        
+        for(int i=0; i<MAX_OUTPUT_SIZE; i++)
+        {
+            *ports[i].ddr |= ports[i].mask_set;
+            *ports[i].port &= ports[i].mask_reset;
+        }
+
     };
 };

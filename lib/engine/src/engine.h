@@ -34,8 +34,6 @@ private:
 public:
     servo_type state = SERVO_UP;
     EngineControl() : engines({
-        {&PORTB, &DDRB, 0b00000001, 0b11111110},
-        {&PORTB, &DDRB, 0b00000010, 0b11111101},
         {&PORTB, &DDRB, 0b00000100, 0b11111011},
         {&PORTB, &DDRB, 0b00001000, 0b11110111},
         {&PORTL, &DDRL, 0b00000001, 0b11111110},
@@ -43,7 +41,9 @@ public:
         {&PORTL, &DDRL, 0b00000100, 0b11111011},
         {&PORTL, &DDRL, 0b00001000, 0b11110111},
         {&PORTL, &DDRL, 0b00010000, 0b11101111},
-        {&PORTL, &DDRL, 0b00100000, 0b11011111}
+        {&PORTL, &DDRL, 0b00100000, 0b11011111},
+        {&PORTL, &DDRL, 0b01000000, 0b10111111},
+        {&PORTL, &DDRL, 0b10000000, 0b01111111}
         })
         
     {
